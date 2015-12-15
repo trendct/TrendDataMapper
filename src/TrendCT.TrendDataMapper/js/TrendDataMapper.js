@@ -24,6 +24,8 @@
 
     GPL
 
+    Live demo: http://projects.ctmirror.org/content/trend/2015/12/TrendDataMapper/demo/
+
 **/
 
 // constructor method for DataMaps map maker object
