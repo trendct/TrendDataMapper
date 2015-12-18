@@ -349,7 +349,7 @@ DmMapMaker.prototype.defaultPopup = function (geography, data, obj) {
         title = geography.id;
     }
 
-    var html_string = "<h5 class='.dmmapmaker_popup_heading'>" + title.replace('_', ' ') + "</h5>" ;
+    var html_string = "<h5 class='dmmapmaker_popup_heading'>" + title.replace('_', ' ') + "</h5>" ;
     
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
