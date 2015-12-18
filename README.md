@@ -2,7 +2,7 @@
 
 
 ## About
-TrendDataMapper is a D3 / DataMaps-based project library-to-be for making multiple tabbed or small-multiple maps. 
+TrendDataMapper is a *very early-stage* D3 / DataMaps-based project library-to-be for making multiple tabbed or small-multiple maps. 
 
 (c) 2015 Jake Kara / Trend CT
 
