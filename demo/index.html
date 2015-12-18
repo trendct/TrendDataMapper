@@ -8,22 +8,22 @@
 <script src="http://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script>
 
 <!-- Datamaps -->
-<script src="vendor/datamaps.usa.min.js"></script>
+<script src="http://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/vendor/datamaps.usa.min.js"></script>
 
 <!-- Trend Libs and dependencies -->
 
 <!-- Trend useful functions -->
-<script src="vendor/TrendCT.Trendy.js"></script>
+<script src="http://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/vendor/TrendCT.Trendy.js"></script>
 
 <!-- Custom CT town-level projection -->
-<script src="vendor/TrendCT.TrendDataMapper/js/ct_towns.topojson.js"></script>
+<script src="http://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/vendor/TrendCT.TrendDataMapper/js/ct_towns.topojson.js"></script>
 
 <!-- Trend Data mapper -->
-<script src="vendor/TrendCT.TrendDataMapper/js/TrendDataMapper.js"></script>
-<link rel="stylesheet" type="text/css" href="vendor/TrendCT.TrendDataMapper/css/TrendDataMapper.css">
+<script src="vhttp://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/endor/TrendCT.TrendDataMapper/js/TrendDataMapper.js"></script>
+<link rel="stylesheet" type="text/css" href="http://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/vendor/TrendCT.TrendDataMapper/css/TrendDataMapper.css">
 
 <!-- Project-specific data -->
-<script src="resources/data/sample_project_data.js"></script>
+<script src="http://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/resources/data/state_to_state_movers.js"></script>
 
 <div>
     <style scoped>
@@ -37,12 +37,24 @@
 
 
     .dmmapmaker_popup {
-        background-color: rgba(255,255,255,0.95);
+        display:none;
+        background-color: rgba(255,255,255,0.9);
         padding: 10px;
         border-radius: 5px;
-        box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
         margin-left: -20px;
-        margin-top: -20px;
+        /*margin-top: -20px;*/
+        margin: 0px;
+    }
+
+    .dmmapmaker_popup hr {
+        color: lightgray;
+        border-style: solid;
+    }
+
+    .dmmapmaker_popup_footer {
+        color: gray;
+        font-size: .75em;
     }
 
     .dmmapmaker_popup_heading {
@@ -54,10 +66,12 @@
 
     .datamaps-subunit {
         cursor: pointer;
+        box-shadow: 0px 0px 2px 1px rgba(0, 0, 0, 0.2);
+
     }
 
     .dmmapmaker_popup_main_value {
-        font-size: 2em;
+        font-size: 1.5em;
     }
     .dmmapmaker_popup_sub_value {
         color: darkgray;
@@ -75,11 +89,13 @@
         color: #bd261d;
     }
     .dmmapmaker_small_multiple {
-        background-color: #EFEFEF;
+        background-color: white;
         padding: 5px;
         border-radius: 4px;
         border: 4px solid white;
         float: left;
+        width: 50%;
+        min-width: 400px;
     }
 
     .dmmapmaker_map {
@@ -107,11 +123,15 @@
 
     @media (max-width: 799px) {
         .dmmapmaker_popup {
-            max-width: 100%;
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .dmmapmaker_small_multiple {
-            min-width: 50%;
+            /*min-width: 50%;*/
+            min-width: 100%;
         }
 
         .float_container {
@@ -120,20 +140,20 @@
 
     }
 
-    #road_condition_us_map_2015 {
-        background-color: indianred;
+    #state_to_state_movers_2015 {
+        /*background-color: honeydew;*/
     }
 
     </style>
-    <h5><i class="fa fa-car"></i> Road condition by state</h5>
+    <h5><i class="fa fa-truck"></i> A soft focus on estimated moves in and out of the state</h5>
 
-    <div class='explainer'>States are required to report international roughness index (IRI) data to the U.S. Department of Transportation Bureau of Transportation Statistics, which reports the data annually. This map shows the percentage of road miles in each category by state. "Very good" indicates an IRI score below 60; "Good" is 60 to 94; "Fair" is 95 to 170; "Mediocre" is 171 to 220 and "Poor" is greater than 220. The data in the 2015 report is from 2013.</div><div style='clear:both'>
+    <div class='explainer'> Taken with a very big grain of salt, here's the U.S. Census Bureau's estimated state-to-state migration in and out of Connecticut. Note the margin of errors are very high, in some cases larger than the estimate. For instance, 662 people might have moved to the Nutmeg State from Hawaii, or maybe no one did, because the margin of error is 773. The blur is a visual reminder that these data are fairly rough.</div><div style='clear:both'>
 
 
-    <div id="road_condition_us_map_2015_toggle_container" class='dmmapmaker_toggle_container'></div>
-    <div id="road_condition_us_map_2015" class="dmmapmaker_map dmmapmaker_root"></div>
-    <div id="road_condition_us_map_2015_pop_in" class="dmmapmaker_pop_in"></div>
-    <div class='sourceline'>U.S. Department of Transportation Bureau of Transportation Statistics</div>
+    <div id="state_to_state_movers__2015_toggle_container" class='dmmapmaker_toggle_container'></div>
+    <div id="state_to_state_movers_2015" class="dmmapmaker_map dmmapmaker_root"></div>
+    <div id="state_to_state_movers_2015_pop_in" class="dmmapmaker_pop_in"></div>
+    <div class='sourceline'>U.S. Census Bureau</div>
     <div class='smallByline'>Jake Kara / TrendCT.org</div>
     <div style='clear:both'></div>
 
@@ -141,5 +161,5 @@
 <div style="clear:both"></div>
 <!--</div>-->
 
-<script src="resources/main.js"></script>
+<script src="http://projects.ctmirror.org/content/trend/2015/12/state_to_state_moves/demo/resources/main.js"></script>
 <!-- EMBED_END -->

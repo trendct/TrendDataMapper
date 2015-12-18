@@ -166,7 +166,6 @@ DmMapMaker.prototype.drawNow = function (options) {
         options.geographyConfig = {};
     };
 
-
     // probably "deprecated" ...
     if (! options.geographyConfig.hasOwnProperty("popupTemplate")){
         options.geographyConfig.popupTemplate = function (geography, data) {
@@ -185,7 +184,8 @@ DmMapMaker.prototype.drawNow = function (options) {
         }
     }
 
-    console.log(this.options);
+    options.geographyConfig.highlightFillColor = (options.geographyConfig.highlightFillColor || "#8c0c04"); //#0062A2
+
     // disable popups manually
     if (options.popup == false) {
         console.log("disable popup");
@@ -231,6 +231,9 @@ DmMapMaker.prototype.drawNow = function (options) {
         }
     }
 
+    // enable passing DataMaps-specified fills options
+    datamap_options.fills = ( options.fills || { defaultFill:"white"});
+
     var that = this;
     datamap_options.done = function (map) {
         that.done_count ++;
@@ -265,7 +268,6 @@ DmMapMaker.prototype.drawNow = function (options) {
     }
 
     else {
-        console.log("no dash array",     this.options);
     }
 
     this.setCategory(this.default_category);
@@ -298,22 +300,32 @@ DmMapMaker.prototype.setColorRange = function(color_range) {
 // set the minimum and maximum values
 DmMapMaker.prototype.setValueRange = function() {
         
-    if (! this.hasOwnProperty("map")) return;
+    if (! this.hasOwnProperty("map")) {
+        return;
+    }
     
     this.value_range = {min: false, max: false};
     
     for (i in this.map.options.data) {
         var data = this.map.options.data[i];
-        var val = Number(data[this.color_field]);
+
+        var raw_val = data[this.color_field];
+
+        if (raw_val === false) { 
+            continue;
+        }
+
+        var val = Number(raw_val);
+
         //console.log( this.value_range.min + " > " + data[this.color_field] + "?")
         // set min value 
-        if (this.value_range.min == false || data[this.color_field] < this.value_range.min ) {
+        if (this.value_range.min === false || data[this.color_field] < this.value_range.min ) {
             this.value_range.min = data[this.color_field];
             //console.log("min: " + this.value_range.min);
         }
         else {
         }
-        if (this.value_range.max == false ||  data[this.color_field] > this.value_range.max) {
+        if (this.value_range.max === false ||  data[this.color_field] > this.value_range.max) {
             this.value_range.max = data[this.color_field];
             //console.log("max: " + this.value_range.max);
         }
@@ -330,7 +342,9 @@ DmMapMaker.prototype.defaultPopup = function (geography, data, obj) {
     // bad hack to accomodate the ct_towns topojson file not being structured
     // the same way as the built in d3 toposjons
     var title = geography.properties.name;
-    
+
+    if (data[obj.color_field] === false ) { return };
+
     if (geography.id.length > 2) {
         title = geography.id;
     }
@@ -350,10 +364,9 @@ DmMapMaker.prototype.defaultPopup = function (geography, data, obj) {
     }
     
     // allow popup data to be added to existing div instead of used as a standard popup
-    if (this.pop_in == true && typeof(this.pop_in_div) != "undefined") {
-        $("#" + this.pop_in_div).html(obj.defaultPopupWithString({
-            string: html_string
-        }));
+    if (this.options.pop_in == true && typeof(this.options.pop_in_div) != "undefined") {
+        console.log("popping in", html_string);
+        $("#" + this.options.pop_in_div).html(html_string);
     }
     else {
         return obj.defaultPopupWithString({string: html_string});
@@ -364,6 +377,9 @@ DmMapMaker.prototype.defaultPopup = function (geography, data, obj) {
 // pop text into popup
 DmMapMaker.prototype.defaultPopupWithString = function (options) {
     
+    // allow "false" to prevent popup from showing
+    if (options.string === false) return;
+
     // boilerplate for all default popups
     var html_string = "<div class='dmmapmaker_popup'>";
     html_string += options.string;
@@ -375,23 +391,36 @@ DmMapMaker.prototype.defaultPopupWithString = function (options) {
 
 // get a choropleth color
 DmMapMaker.prototype.getColorByKey = function(key) {
-    
+
+
     var value = this.map.options.data[key][this.color_field];
-    
+
+    if (value === false) { 
+        return false;
+        return this.map.options.fills.defaultFill; 
+    }
+
     // if there's no color range, go white to black;
     if (typeof(this.color_range) == "undefined") {
         this.setColorRange({min: [255,255,255], max: [0,0,0]});
     }
     
     // check that all requirements are set
-    if (this.color_field == false ||
-        this.value_range.max == false ||
-        this.value_range.min == false ||
-        this.color_range.min == false ||
-        this.color_range.max == false
-       ) {
-        //console.log("error", this);
-        return false;//return "blue";
+    if (this.color_field === false) {
+        console.error("no color_field");
+        return false;
+    } else if (this.value_range.max === false){
+        console.error("no value_range.max");
+        return false;
+    } else if (this.value_range.min === false) {
+        console.error("no value_range.min");
+        return false;
+    } else if ( this.color_range.min === false) {
+        console.error("no color_range.min");
+        return false;
+    } else if (this.color_range.max === false) {
+        console.error("no color_range.max");
+        return false;
     }
         
     // the possible rgb values
@@ -421,12 +450,23 @@ DmMapMaker.prototype.colorLocations = function () {
     for (var key in this.map.options.data){
         var data = this.map.options.data[key];
 
+        console.log();
+
         var obj = {}
         var color = this.getColorByKey(key);
-        if (!color) return false;
-        obj[ key.toString().replace(' ','_') ] =  this.getColorByKey(key);
+        if (color === false) {
+            color = this.map.options.fills.defaultFill;
+            //return false;
+        }
+        obj[ key.toString().replace(' ','_') ] =  color; //this.getColorByKey(key);
+
+        var data = this.map.options.data[key];
 
         this.map.updateChoropleth(obj);
+    }
+
+    if (this.options.hasOwnProperty("draw_callback")) {
+        this.options.draw_callback();
     }
     
     return this;
@@ -493,7 +533,7 @@ $(".dmmapmaker_small_multiple").remove();
         // create new div
         
         
-         $("#" + master_options.div_id).append("<div class='dmmapmaker_small_multiple' data-category='"+category+"' style=\"width:" + width     + "%;min-width: 200px;\" data-multiples="+categories.length+"><div class='dmmapmaker_small_multiple_header'>"+category.toUpperCase()+"</div><div class='dmmapmaker_map dmmapmaker_small_multiple_map' id='"+new_div+"'>"+"</div></div>");
+         $("#" + master_options.div_id).append("<div class='dmmapmaker_small_multiple' data-category='"+category+"'  data-multiples="+categories.length+"><div class='dmmapmaker_small_multiple_header'>"+category.toUpperCase()+"</div><div class='dmmapmaker_map dmmapmaker_small_multiple_map' id='"+new_div+"'>"+"</div></div>");
         
         this.child_maps[category] = new DmMapMaker(copy_options);
 
