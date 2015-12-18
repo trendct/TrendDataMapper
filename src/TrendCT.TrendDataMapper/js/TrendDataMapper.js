@@ -1,7 +1,5 @@
 /**
 
-    DataMaps-based map maker for tabbed and small-multiple maps.
-
 ......,,,,,,,,,:::::,                                                                               
 '+++++++++++++++++++;                                                                               
 '+++''''+++++''''+++;                                                                               
@@ -20,11 +18,13 @@
      +++++++++++  ;++++++;  ++++++++++++++++++++++++    ++++';+++++++++++++       +++++  `++++ :++++
 
     
+    TrendDataMapper - DataMaps-based map maker for tabbed and small-multiple maps.
+
     (C) 2015 Jake Kara / TrendCT.org
 
-    GPL
-
-    Live demo: http://projects.ctmirror.org/content/trend/2015/12/TrendDataMapper/demo/
+    Github: https://github.com/trendct/TrendDataMapper.git
+    Live demo:  http://projects.ctmirror.org/content/trend/2015/12/TrendDataMapper/demo/
+    Working dir: http://projects.ctmirror.org/dev/git/TrendDataMapper
 
 **/
 
