@@ -349,7 +349,7 @@ DmMapMaker.prototype.defaultPopup = function (geography, data, obj) {
         title = geography.id;
     }
 
-    var html_string = "<h5 class='.dmmapmaker_popup_heading'>" + title.replace('_', ' ') + "</h5>" ;
+    var html_string = "<h5 class='dmmapmaker_popup_heading'>" + title.replace('_', ' ') + "</h5>" ;
     
     for (var key in data) {
         if (data.hasOwnProperty(key)) {
@@ -384,6 +384,33 @@ DmMapMaker.prototype.defaultPopupWithString = function (options) {
     var html_string = "<div class='dmmapmaker_popup'>";
     html_string += options.string;
     html_string += "</div>";
+
+
+    // use an interval to move wandering popups back within the page
+    clearInterval(this.popup_interval);
+
+    var that = this;
+    //$("#" + that.div_id + " " + ".datamaps-hoverover").hide();
+    this.popup_interval = setInterval(function () {
+
+        $("#" + that.div_id + " " + ".datamaps-hoverover").width(200);
+        if ( $("#" + that.div_id + " " + ".datamaps-hoverover").width() 
+            + Number($("#" + that.div_id + " " + ".datamaps-hoverover").css("left").replace("px","")) 
+            >  $(window).width()) {
+
+            $("#" + that.div_id + " " + ".datamaps-hoverover").width(200);
+              
+
+            $("#" + that.div_id + " " + ".datamaps-hoverover").css("left", 
+                Number( $("#" + that.div_id + " " + ".datamaps-hoverover").css("left").replace("px","")) - 45
+            );
+            //$("#" + that.div_id + " " + ".datamaps-hoverover").css("right", "10");
+
+        } 
+
+        //$("#" + that.div_id + " " + ".datamaps-hoverover").show();
+    } , 100);
+
 
     return html_string;
 
