@@ -343,7 +343,9 @@ DmMapMaker.prototype.defaultPopup = function (geography, data, obj) {
     // the same way as the built in d3 toposjons
     var title = geography.properties.name;
 
-    if (data[obj.color_field] === false ) { return };
+    if (data === null) {return; }
+    if (typeof(data) == "undefined") { return; }
+    if (data[obj.color_field] === false ) { return; }
 
     if (geography.id.length > 2) {
         title = geography.id;
